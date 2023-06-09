@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset='utf-8'>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<title>Page Title</title>
+	<meta name='viewport' content='width=device-width, initial-scale=1'>
+	<style>
+		:root {
+			--size: 30px;
+			--border: 2px;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			background: maroon;
+		}
+
+		.track {
+			position: relative;
+		}
+
+		.bg {
+			color: white;
+			position: absolute;
+			top: var(--border);
+			right: var(--border);
+			bottom: var(--border);
+			left: var(--border);
+			background: black;
+			-webkit-mask: linear-gradient(to bottom, transparent 30%, black 30% 70%, transparent 70%),
+				radial-gradient(circle at calc(var(--size) * 0.5), black calc(var(--size) * 0.5), transparent calc(var(--size) * 0.5)),
+				radial-gradient(circle at 50%, black calc(var(--size) * 0.5), transparent calc(var(--size) * 0.5)),
+				radial-gradient(circle at calc(100% - var(--size) * 0.5), black calc(var(--size) * 0.5), transparent calc(var(--size) * 0.5));
+			-webkit-opacity: 0.4;
+		}
+
+		.bar {
+			position: absolute;
+			top: 30%;
+			bottom: 30%;
+			left: calc(var(--size) * 0.5 + var(--border));
+			right: calc(var(--size) * 0.5 + var(--border));
+			border: var(--border) solid white;
+			-webkit-mask:
+				radial-gradient(circle at 0%, transparent calc(var(--size) * 0.5), black calc(var(--size) * 0.5)),
+				radial-gradient(circle at 50%, transparent calc(var(--size) * 0.5), black calc(var(--size) * 0.5)),
+				radial-gradient(circle at 100%, transparent calc(var(--size) * 0.5), black calc(var(--size) * 0.5));
+			-webkit-mask-composite: destination-in;
+		}
+
+
+		.dots {
+			position: relative;
+			display: flex;
+			justify-content: space-between;
+		}
+
+		.dot {
+			position: relative;
+			width: calc(var(--size) + var(--border) * 2);
+			aspect-ratio: 1;
+			border-radius: var(--size);
+		}
+
+		.dot::before {
+			content: "";
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			top: 0;
+			border-radius: inherit;
+			border: var(--border) solid white;
+			-webkit-mask: linear-gradient(to bottom, black 30%, transparent 30% 70%, black 70%);
+		}
+
+		.dot:first-child::before {
+			-webkit-mask: linear-gradient(to bottom, black 30%, transparent 30% 70%, black 70%),
+				linear-gradient(to right, black 50%, transparent 50%);
+		}
+
+		.dot:last-child::before {
+			-webkit-mask: linear-gradient(to bottom, black 30%, transparent 30% 70%, black 70%),
+				linear-gradient(to left, black 50%, transparent 50%);
+		}
+
+		.bg-circle {
+			background: none;
+			-webkit-opacity: unset;
+			-webkit-mask: linear-gradient(to bottom, transparent calc(30% + var(--border) * 2), black calc(30% + var(--border) * 2) calc(70% - var(--border) * 2), transparent calc(70% - var(--border) * 2)),
+				radial-gradient(circle at calc(var(--size) * 0.5), black calc(var(--size) * 0.5), transparent calc(var(--size) * 0.5)),
+				radial-gradient(circle at 50%, black calc(var(--size) * 0.5), transparent calc(var(--size) * 0.5)),
+				radial-gradient(circle at calc(100% - var(--size) * 0.5), black calc(var(--size) * 0.5), transparent calc(var(--size) * 0.5));
+		}
+
+		.circle {
+			position: absolute;
+			width: var(--size);
+			aspect-ratio: 1;
+			border-radius: var(--size);
+		}
+
+		.circle::after {
+			--w: 60%;
+			content: "";
+			position: absolute;
+			width: var(--w);
+			left: calc((100% - var(--w)) * 0.5);
+			top: calc((100% - var(--w)) * 0.5);
+			aspect-ratio: 1;
+			border-radius: inherit;
+			background: white;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="track">
+		<div class="bg"></div>
+		<div class="bar"></div>
+		<div class="dots">
+			<div class="dot"></div>
+			<div class="dot"></div>
+			<div class="dot"></div>
+		</div>
+		<div class="bg bg-circle">
+			<div class="circle"></div>
+		</div>
+	</div>
+</body>
+
+</html>
