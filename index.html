@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset='utf-8'>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<title>Dot Slider</title>
+	<meta name='viewport' content='width=device-width, initial-scale=1'>
+	<style>
+		:root {
+			--size: 30px;
+			--border: 2px;
+			--track: 30%;
+			--i: 0;
+			--length: 3;
+			--circle: 60%;
+			--bg-border: 0px;
+			--color: white;
+			--bg-color: black;
+			--bg-opacity: 0.4;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		a:link,
+		a:active {
+			color: white;
+		}
+
+		html,
+		body {
+			height: 100%;
+		}
+
+		body {
+			display: flex;
+			flex-direction: column;
+			margin: 0;
+			background: darkslategray;
+			color: white;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		header {
+			padding: 1rem;
+			font-size: 200%;
+			font-weight: bold;
+		}
+
+		main {
+			flex: 1;
+			overflow: auto;
+			padding: 1rem;
+		}
+
+		footer {
+			text-align: center;
+			padding: 1rem;
+		}
+
+		#track {
+			position: relative;
+		}
+
+		.bg {
+			color: var(--color);
+			position: absolute;
+			top: var(--border);
+			right: var(--border);
+			bottom: var(--border);
+			left: var(--border);
+			background: var(--bg-color);
+			-webkit-mask:
+				linear-gradient(to bottom,
+					transparent calc(var(--track) + var(--bg-border) * 2),
+					black calc(var(--track) + var(--bg-border) * 2) calc(calc(100% - var(--track)) - var(--bg-border) * 2),
+					transparent calc(calc(100% - var(--track)) - var(--bg-border) * 2)),
+				radial-gradient(circle at calc(var(--size) * 0.5),
+					black calc(var(--size) * 0.5 - var(--bg-border)),
+					transparent calc(var(--size) * 0.5 - var(--bg-border))),
+				radial-gradient(circle at 50%,
+					black calc(var(--size) * 0.5 - var(--bg-border)),
+					transparent calc(var(--size) * 0.5 - var(--bg-border))),
+				radial-gradient(circle at calc(100% - var(--size) * 0.5),
+					black calc(var(--size) * 0.5 - var(--bg-border)),
+					transparent calc(var(--size) * 0.5 - var(--bg-border)));
+			opacity: var(--bg-opacity);
+		}
+
+		.bar {
+			position: absolute;
+			top: var(--track);
+			bottom: var(--track);
+			left: calc(var(--size) * 0.5 + var(--border));
+			right: calc(var(--size) * 0.5 + var(--border));
+			border: var(--border) solid var(--color);
+			-webkit-mask:
+				radial-gradient(circle at 0%, transparent calc(var(--size) * 0.5), black calc(var(--size) * 0.5)),
+				radial-gradient(circle at 50%, transparent calc(var(--size) * 0.5), black calc(var(--size) * 0.5)),
+				radial-gradient(circle at 100%, transparent calc(var(--size) * 0.5), black calc(var(--size) * 0.5));
+			-webkit-mask-composite: destination-in;
+		}
+
+
+		.dots {
+			position: relative;
+			display: flex;
+			justify-content: space-between;
+		}
+
+		.dot {
+			position: relative;
+			width: calc(var(--size) + var(--border) * 2);
+			aspect-ratio: 1;
+			border-radius: var(--size);
+			z-index: 100;
+			cursor: pointer;
+		}
+
+		.dot::before {
+			content: "";
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			top: 0;
+			border-radius: inherit;
+			border: var(--border) solid var(--color);
+			-webkit-mask: linear-gradient(to bottom, black var(--track), transparent var(--track) calc(100% - var(--track)), black calc(100% - var(--track)));
+		}
+
+		.dot:first-child::before {
+			-webkit-mask: linear-gradient(to bottom, black var(--track), transparent var(--track) calc(100% - var(--track)), black calc(100% - var(--track))),
+				linear-gradient(to right, black 50%, transparent 50%);
+		}
+
+		.dot:last-child::before {
+			-webkit-mask: linear-gradient(to bottom, black var(--track), transparent var(--track) calc(100% - var(--track)), black calc(100% - var(--track))),
+				linear-gradient(to left, black 50%, transparent 50%);
+		}
+
+		.bg-circle {
+			background: none;
+			-webkit-opacity: unset;
+			--bg-border: var(--border);
+		}
+
+		.circle {
+			position: absolute;
+			width: var(--size);
+			aspect-ratio: 1;
+			border-radius: var(--size);
+			left: 0;
+			transition: left 1s cubic-bezier(0.60, 0, 0.40, 1);
+		}
+
+		.circle::after {
+			content: "";
+			position: absolute;
+			width: var(--circle);
+			left: calc((100% - var(--circle)) * 0.5);
+			top: calc((100% - var(--circle)) * 0.5);
+			aspect-ratio: 1;
+			border-radius: inherit;
+			background: var(--color);
+		}
+
+		input {
+			width: 50px;
+		}
+
+		table {
+			margin-bottom: 1rem;
+		}
+
+		td {
+			padding: 0.25rem 0.5rem;
+		}
+	</style>
+</head>
+
+<body>
+	<header>Track Slider</header>
+	<main>
+		<table>
+			<tr>
+				<td>Number of Dots</td>
+				<td><input type="number" value="3" min="2" max="20" oninput="setSlider(this.value)" /></td>
+			</tr>
+			<tr>
+				<td>Dot Size</td>
+				<td><input type="number" value="30" min="10" max="100" oninput="setDotSize(this.value)" /> px</td>
+			</tr>
+			<tr>
+				<td>Border Size</td>
+				<td><input type="number" value="1" min="0" max="5" oninput="setBorderSize(this.value)" /> px</td>
+			</tr>
+			<tr>
+				<td>Track Size</td>
+				<td><input type="number" value="40" min="15" max="60" oninput="setTrackSize(this.value)" /> %</td>
+			</tr>
+			<tr>
+				<td>Foreground Color</td>
+				<td><input type="color" value="#FFFFFF" oninput="setForeground(this.value)" /></td>
+			</tr>
+			<tr>
+				<td>Background Color</td>
+				<td><input type="color" value="#000000" oninput="setBackground(this.value)" /></td>
+			</tr>
+			<tr>
+				<td>Background Opacity</td>
+				<td><input type="number" value="0.4" min="0" max="1" step="0.1" oninput="setOpacity(this.value)" /></td>
+			</tr>
+		</table>
+
+		<div id="track">
+			<div class="bg"></div>
+			<div class="bar"></div>
+			<div class="dots">
+				<div class="dot"></div>
+				<div class="dot"></div>
+				<div class="dot"></div>
+			</div>
+			<div class="bg bg-circle">
+				<div class="circle"></div>
+			</div>
+		</div>
+	</main>
+	<footer>&copy; Fieana 2021. <a href="https://github.com/fieana/dot-slider" class="gh-icon"
+			target="_blank">Github</a>
+	</footer>
+	<script type="text/javascript">
+		// define variables
+		let length = 3;
+		let bgMaskStart = `
+			linear-gradient(to bottom,
+					transparent calc(var(--track) + var(--bg-border) * 2),
+					black calc(var(--track) + var(--bg-border) * 2) calc(calc(100% - var(--track)) - var(--bg-border) * 2),
+					transparent calc(calc(100% - var(--track)) - var(--bg-border) * 2))
+				,radial-gradient(circle at calc(var(--size) * 0.5),
+					black calc(var(--size) * 0.5 - var(--bg-border)),
+					transparent calc(var(--size) * 0.5 - var(--bg-border)))`;
+		let bgMask = ``;
+		let barMask = ``;
+
+		// define divs
+		let trackDiv = document.getElementById("track");
+		let bgDiv = trackDiv.querySelector(".bg");
+		let bgCircleDiv = trackDiv.querySelector(".bg-circle");
+		let dotsDiv = trackDiv.querySelector(".dots");
+		let barDiv = trackDiv.querySelector(".bar");
+		let circleDiv = trackDiv.querySelector(".circle");
+
+		// logic
+		this.setSlider();
+
+
+		function dotClick(dot) {
+			let index = +dot.style.getPropertyValue("--dot-index");
+			document.documentElement.style.setProperty('--i', index);
+			if (index > 0) circleDiv.style.setProperty('left', `calc(((100% - var(--size)) / (var(--length) - 1)) * var(--i))`);
+		}
+		function setSlider(value) {
+			length = value ?? length;
+			document.documentElement.style.setProperty('--i', 0);
+
+
+			// display dots
+			dotsDiv.innerHTML = "";
+			for (var j = 0; j < length; j++) {
+				let dotDiv = document.createElement("div");
+				dotDiv.classList.add("dot");
+				dotDiv.style.setProperty("--dot-index", j),
+					dotDiv.addEventListener("click", () => { dotClick(dotDiv) });
+				dotsDiv.append(dotDiv);
+			}
+
+			if (length > 1) {
+				bgMask = ``;
+				barMask = ``;
+				for (var j = 1; j < length; j++) {
+					// set dot masks
+					let bgPosition = `calc(var(--size) * 0.5 + ((100% - var(--size)) / (var(--length) - 1)) * ${j})`;
+					let bgRadial = `
+					,radial-gradient(circle at ${bgPosition},
+						black calc(var(--size) * 0.5 - var(--bg-border)),
+						transparent calc(var(--size) * 0.5 - var(--bg-border)))`;
+					bgMask += bgRadial;
+
+					// set bar masks
+					let barPosition = `calc((100% / (var(--length) - 1)) * ${j})`;
+					let barRadial = `
+					,radial-gradient(circle at ${barPosition},
+						transparent calc(var(--size) * 0.5),
+						black calc(var(--size) * 0.5))`;
+					barMask += barRadial;
+				}
+			}
+
+
+			// set properties
+			document.documentElement.style.setProperty('--length', length);
+			bgDiv.style.setProperty("-webkit-mask", bgMaskStart + bgMask);
+			bgCircleDiv.style.setProperty("-webkit-mask", bgMaskStart + bgMask);
+			barDiv.style.setProperty("-webkit-mask", `
+			radial-gradient(circle at 0%,
+				transparent calc(var(--size) * 0.5),
+				black calc(var(--size) * 0.5))
+			${barMask}
+		`);
+		}
+		function setDotSize(value) {
+			document.documentElement.style.setProperty('--size', value + "px");
+			this.setSlider();
+		}
+		function setTrackSize(value) {
+			document.documentElement.style.setProperty('--track', (100 - value) * 0.5 + "%");
+			this.setSlider();
+		}
+		function setBorderSize(value) {
+			document.documentElement.style.setProperty('--border', value + "px");
+			bgCircleDiv.style.setProperty('--bg-border', value + "px");
+			this.setSlider();
+		}
+		function setForeground(value) {
+			document.documentElement.style.setProperty('--color', value);
+			this.setSlider();
+		}
+		function setBackground(value) {
+			document.documentElement.style.setProperty('--bg-color', value);
+			this.setSlider();
+		}
+		function setOpacity(value) {
+			document.documentElement.style.setProperty('--bg-opacity', value);
+			this.setSlider();
+		}
+	</script>
+</body>
+
+</html>
